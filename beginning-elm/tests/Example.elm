@@ -7,6 +7,4 @@ import Test exposing (..)
 
 suite : Test
 suite =
-    test "two plus two equals four"
-         (\_ -> Expect.equal 4 (2 + 2))
-    --todo "Implement our first test. See https://package.elm-lang.org/packages/elm-explorations/test/latest for how to do this!"
+    todo "Implement our first test. See https://package.elm-lang.org/packages/elm-explorations/test/latest for how to do this!"
