@@ -21,4 +21,11 @@ computeTime startTime endTime =
     endTime - startTime
 
 main =
-    Html.text (escapeEarth 11 (computeSpeed 7.67 (computeTime 2 3)))
+    -- that's ugly
+    -- Html.text (escapeEarth 11 (computeSpeed 7.67 (computeTime 2 3)))
+    -- that's better
+    computeTime 2 3
+        |> computeSpeed 7.67
+        |> escapeEarth 11
+        |> Html.text
+
