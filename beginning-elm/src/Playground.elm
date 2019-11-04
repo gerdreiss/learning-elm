@@ -28,4 +28,9 @@ main =
         |> computeSpeed 7.67
         |> escapeEarth 11
         |> Html.text
+    -- or
+    Html.text
+        <| escapeEarth 11
+        <| computeSpeed 7.67
+        <| computeTime 2 3
 
