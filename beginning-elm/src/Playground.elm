@@ -13,6 +13,12 @@ escapeEarth myVelocity mySpeed =
     else
         "Come back"
 
+computeSpeed distance time =
+    distance / time
+
+
+computeTime startTime endTime =
+    endTime - startTime
 
 main =
-    Html.text (escapeEarth 11.2 7.2)
+    Html.text (escapeEarth 11 (computeSpeed 7.67 (computeTime 2 3)))
