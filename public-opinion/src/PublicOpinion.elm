@@ -4,6 +4,7 @@ import Browser
 import Html exposing (..)
 import Html.Attributes exposing (..)
 import Http
+import Json.Decode as Json
 
 
 
@@ -24,7 +25,7 @@ main =
 
 
 type Model
-    = Failure
+    = Failure String
     | Loading
     | Success String
 
@@ -55,8 +56,32 @@ update msg model =
                 Ok fullText ->
                     ( Success fullText, Cmd.none )
 
-                Err _ ->
-                    ( Failure, Cmd.none )
+                Err error ->
+                    ( Failure (errorToString error), Cmd.none )
+
+
+parseError : String -> Maybe String
+parseError =
+    Json.decodeString (Json.field "error" Json.string) >> Result.toMaybe
+
+
+errorToString : Http.Error -> String
+errorToString err =
+    case err of
+        Http.Timeout ->
+            "Timeout exceeded"
+
+        Http.NetworkError ->
+            "Network error"
+
+        Http.BadStatus resp ->
+            "Bad Status: " ++ String.fromInt resp
+
+        Http.BadBody text ->
+            "Unexpected response from api: " ++ text
+
+        Http.BadUrl url ->
+            "Malformed url: " ++ url
 
 
 
@@ -75,8 +100,8 @@ subscriptions model =
 view : Model -> Html Msg
 view model =
     case model of
-        Failure ->
-            div [ class "container" ] [ text "I was unable to load your book." ]
+        Failure error ->
+            div [ class "container" ] [ text (String.concat [ "I was unable to load your book: ", error ]) ]
 
         Loading ->
             div [ class "container" ] [ text "Loading..." ]
