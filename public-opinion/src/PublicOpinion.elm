@@ -1,10 +1,9 @@
-module PublicOpinion exposing (..)
+module PublicOpinion exposing (main)
 
 import Browser
 import Html exposing (..)
 import Html.Attributes exposing (..)
 import Http
-import Json.Decode as Json
 
 
 
@@ -58,11 +57,6 @@ update msg model =
 
                 Err error ->
                     ( Failure (errorToString error), Cmd.none )
-
-
-parseError : String -> Maybe String
-parseError =
-    Json.decodeString (Json.field "error" Json.string) >> Result.toMaybe
 
 
 errorToString : Http.Error -> String
