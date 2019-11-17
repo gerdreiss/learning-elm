@@ -1,8 +1,10 @@
 module SignupCssStyled exposing (User)
 
+import Browser
 import Css exposing (..)
 import Html.Styled exposing (..)
 import Html.Styled.Attributes exposing (..)
+import Html.Styled.Events exposing (onClick, onInput)
 import VirtualDom
 
 
@@ -14,6 +16,14 @@ type alias User =
     }
 
 
+type Msg
+    = SaveName String
+    | SaveEmail String
+    | SavePassword String
+    | Signup
+    | Logout
+
+
 initialModel : User
 initialModel =
     { name = ""
@@ -23,29 +33,60 @@ initialModel =
     }
 
 
-view : User -> Html msg
+view : User -> Html Msg
 view user =
-    div []
-        [ h1 [ css [ paddingLeft (cm 3) ] ] [ text "Sign up" ]
-        , styledForm []
-            [ div []
-                [ text "Name"
-                , styledInput [ id "name", type_ "text" ] []
-                ]
-            , div []
-                [ text "Email"
-                , styledInput [ id "email", type_ "email" ] []
-                ]
-            , div []
-                [ text "Password"
-                , styledInput [ id "password", type_ "password" ] []
-                ]
-            , div []
-                [ styledButton [ type_ "submit" ]
-                    [ text "Create my account" ]
+    if user.loggedIn then
+        div []
+            [ h1 [ css [ paddingLeft (cm 3) ] ] [ text "Logout" ]
+            , styledForm []
+                [ div []
+                    [ styledButton [ type_ "submit", onClick Logout ]
+                        [ text "Logout" ]
+                    ]
                 ]
             ]
-        ]
+
+    else
+        div []
+            [ h1 [ css [ paddingLeft (cm 3) ] ] [ text "Sign up" ]
+            , styledForm []
+                [ div []
+                    [ text "Name"
+                    , styledInput [ id "name", type_ "text", onInput SaveName ] []
+                    ]
+                , div []
+                    [ text "Email"
+                    , styledInput [ id "email", type_ "email", onInput SaveEmail ] []
+                    ]
+                , div []
+                    [ text "Password"
+                    , styledInput [ id "password", type_ "password", onInput SavePassword ] []
+                    ]
+                , div []
+                    [ styledButton [ type_ "submit", onClick Signup ]
+                        [ text "Create my account" ]
+                    ]
+                ]
+            ]
+
+
+update : Msg -> User -> User
+update message user =
+    case message of
+        SaveName name ->
+            { user | name = name }
+
+        SaveEmail email ->
+            { user | email = email }
+
+        SavePassword password ->
+            { user | password = password }
+
+        Signup ->
+            { user | loggedIn = True }
+
+        Logout ->
+            { user | loggedIn = False }
 
 
 styledForm : List (Attribute msg) -> List (Html msg) -> Html msg
@@ -84,6 +125,10 @@ styledButton =
         ]
 
 
-main : VirtualDom.Node msg
+main : Program () User Msg
 main =
-    toUnstyled <| view initialModel
+    Browser.sandbox
+        { init = initialModel
+        , view = view >> toUnstyled
+        , update = update
+        }
