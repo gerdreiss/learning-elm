@@ -40,7 +40,7 @@ view user =
                 ]
             , div []
                 [ button [ type_ "submit" ]
-                    [ text "Create my account" ]
+                    [ text "Signup" ]
                 ]
             ]
         ]

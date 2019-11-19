@@ -4456,7 +4456,7 @@ var author$project$Signup$view = function (user) {
 									]),
 								_List_fromArray(
 									[
-										elm$html$Html$text('Create my account')
+										elm$html$Html$text('Signup')
 									]))
 							]))
 					]))
