@@ -1,19 +1,26 @@
 module Main exposing (main)
 
 import Browser
+import Browser.Navigation as Nav
 import Page.ListPosts as ListPosts
 import Route exposing (Route)
+import Url exposing (Url)
 
 
 type alias Model =
     { route : Route
     , page : Page
+    , navKey : Nav.Key
     }
 
 
 type Page
     = NotFoundPage
     | ListPage ListPosts.Model
+
+
+type Msg
+    = ListPageMsg ListPosts.Msg
 
 
 init : () -> Url -> Nav.Key -> ( Model, Cmd Msg )
