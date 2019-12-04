@@ -18,8 +18,8 @@ type Msg
     | PostsReceived (WebData (List Post))
 
 
-init : () -> ( Model, Cmd Msg )
-init _ =
+init : ( Model, Cmd Msg )
+init =
     ( { posts = RemoteData.Loading }, fetchPosts )
 
 
@@ -27,7 +27,9 @@ fetchPosts : Cmd Msg
 fetchPosts =
     Http.get
         { url = "http://localhost:5019/posts"
-        , expect = postsDecoder |> Http.expectJson (RemoteData.fromResult >> PostsReceived)
+        , expect =
+            postsDecoder
+                |> Http.expectJson (RemoteData.fromResult >> PostsReceived)
         }
 
 
