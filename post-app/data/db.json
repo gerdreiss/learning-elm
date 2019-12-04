@@ -1,0 +1,23 @@
+{
+  "posts": [
+    {
+      "id": 1,
+      "title": "json-server",
+      "author": {
+        "name": "typicode",
+        "url": "https://github.com/typicode"
+      }
+    },
+    {
+      "id": 2,
+      "title": "http-server",
+      "author": {
+        "name": "indexzero",
+        "url": "https://github.com/indexzero"
+      }
+    }
+  ],
+  "profile": {
+    "name": "typicode"
+  }
+}
