@@ -20,8 +20,15 @@ type Page
     | ListPage ListPosts.Model
 
 
+type UrlRequest
+    = Internal Url
+    | External String
+
+
 type Msg
     = ListPageMsg ListPosts.Msg
+    | LinkClicked Browser.UrlRequest
+    | UrlChanged Url
 
 
 init : () -> Url -> Nav.Key -> ( Model, Cmd Msg )
@@ -56,8 +63,15 @@ initCurrentPage ( model, existingCmds ) =
     )
 
 
-view : Model -> Html Msg
+view : Model -> Browser.Document Msg
 view model =
+    { title = "Post App"
+    , body = [ currentView model ]
+    }
+
+
+currentView : Model -> Html Msg
+currentView model =
     case model.page of
         NotFoundPage ->
             notFoundView
@@ -72,11 +86,49 @@ notFoundView =
     h3 [] [ text "Oops! The page you requested was not found!" ]
 
 
-main : Program () ListPosts.Model ListPosts.Msg
+update : Msg -> Model -> ( Model, Cmd Msg )
+update msg model =
+    case ( msg, model.page ) of
+        ( ListPageMsg subMsg, ListPage pageModel ) ->
+            let
+                ( updatedPageModel, updatedCmd ) =
+                    ListPosts.update subMsg pageModel
+            in
+            ( { model | page = ListPage updatedPageModel }
+            , Cmd.map ListPageMsg updatedCmd
+            )
+
+        ( LinkClicked urlRequest, _ ) ->
+            case urlRequest of
+                Browser.Internal url ->
+                    ( model
+                    , Nav.pushUrl model.navKey (Url.toString url)
+                    )
+
+                Browser.External url ->
+                    ( model
+                    , Nav.load url
+                    )
+
+        ( UrlChanged url, _ ) ->
+            let
+                newRoute =
+                    Route.parseUrl url
+            in
+            ( { model | route = newRoute }, Cmd.none )
+                |> initCurrentPage
+
+        ( _, _ ) ->
+            ( model, Cmd.none )
+
+
+main : Program () Model Msg
 main =
-    Browser.element
-        { init = ListPosts.init
-        , view = ListPosts.view
-        , update = ListPosts.update
+    Browser.application
+        { init = init
+        , view = view
+        , update = update
         , subscriptions = \_ -> Sub.none
+        , onUrlRequest = LinkClicked
+        , onUrlChange = UrlChanged
         }
